@@ -19,3 +19,9 @@ Untuk mengulang dari awal, hapus file `database/aduan.sqlite`.
     assets/            style.css, app.js
     database/          schema.sql, seed.php
     uploads/           foto bukti (tercatat di tabel media_aduan)
+
+## Tampilan
+Tampilan disamakan dengan Dashboard Monitoring Aduan Warga (versi HTML tunggal):
+`assets/style.css` memakai CSS dashboard asli (+ blok penyesuaian PHP di bagian bawah),
+`assets/app.js` memuat tema, dialog detail, dan grafik tren (data dikirim dari PHP lewat `window.TREND_CONFIG`),
+`assets/img/` dan `assets/video/` berisi foto avatar, foto aduan/sesudah, serta video contoh CCTV.

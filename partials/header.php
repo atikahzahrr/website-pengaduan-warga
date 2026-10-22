@@ -30,8 +30,9 @@ document.documentElement.dataset.theme=p==='auto'?(matchMedia('(prefers-color-sc
     </div>
     <div class="header-actions">
       <label class="theme-control">Tema
-        <select id="theme-select"><option value="auto">Otomatis</option><option value="light">Terang</option><option value="dark">Gelap</option></select>
+        <select id="theme-select" aria-label="Pilih tema dashboard"><option value="auto">Otomatis</option><option value="light">Terang</option><option value="dark">Gelap</option></select>
       </label>
+      <span class="dummy">Mode simulasi · Data dummy</span>
     </div>
   </header>
 
@@ -40,27 +41,31 @@ document.documentElement.dataset.theme=p==='auto'?(matchMedia('(prefers-color-sc
       <div class="brand">▦ &nbsp; Aduan Masyarakat<p class="small muted">Dashboard Eksekutif</p></div>
       <nav aria-label="Menu utama dashboard">
         <?php $first = true; foreach ($groups as $label => $items): ?>
-          <?php if (!$first): ?><div class="sidebar-divider"></div><?php endif; $first = false; ?>
+          <?php if (!$first): ?><div class="sidebar-divider" aria-hidden="true"></div><?php endif; $first = false; ?>
           <p class="nav-label"><?= e($label) ?></p>
           <div class="nav">
             <?php foreach ($items as $key => $v): ?>
               <a href="?page=<?= e($key) ?>" <?= $key === $page ? 'aria-current="page"' : '' ?>>
-                <span class="nav-icon" style="--icon-tone:<?= e($v[4]) ?>"><?= e($v[3]) ?></span><?= e($navLabels[$key] ?? $v[0]) ?>
+                <span class="nav-icon" aria-hidden="true" style="--icon-tone:<?= e($v[4]) ?>"><?= icon($key) ?></span><?= e($navLabels[$key] ?? $v[0]) ?>
               </a>
             <?php endforeach; ?>
           </div>
         <?php endforeach; ?>
       </nav>
+      <p class="small muted" style="margin:20px 10px 4px">Dataset awal: September 2026</p>
     </aside>
 
-    <main id="main-content">
-      <?php if ($msg = flash()): ?><p class="notice" role="status"><?= e($msg) ?></p><?php endif; ?>
+    <main id="main-content" tabindex="-1">
+      <p id="storage-status" class="small muted" role="status"><?= ($msg = flash()) ? e($msg) : '' ?></p>
       <section class="card">
         <div class="intro">
           <div>
             <span class="pill">PUSAT KOMANDO EKSEKUTIF</span>
-            <h2><?= e($title) ?></h2>
-            <p class="muted small"><?= e($description) ?></p>
+            <h2 id="view-title"><?= e($title) ?></h2>
+            <p id="view-description" class="muted small"><?= e($description) ?></p>
           </div>
-          <div class="small muted">Diperbarui: <?= e(tanggal(date('Y-m-d H:i:s'))) ?></div>
+          <div>
+            <a id="refresh" class="btn" href="<?= e(url()) ?>">↻ Perbarui Tampilan</a>
+            <p id="updated" class="small muted" role="status" style="margin-top:8px">Tampilan diperbarui: <?= e(tanggal(date('Y-m-d H:i:s'))) ?></p>
+          </div>
         </div>
