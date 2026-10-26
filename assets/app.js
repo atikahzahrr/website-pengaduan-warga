@@ -10,9 +10,9 @@
 
   const apply = () => {
     document.documentElement.dataset.theme = preference === 'auto' ? (system.matches ? 'dark' : 'light') : preference;
-    control.value = preference;
+    if (control) control.value = preference;
   };
-  control.addEventListener('change', () => {
+  control?.addEventListener('change', () => {
     preference = control.value;
     try { localStorage.setItem(KEY, preference); } catch {}
     apply();
@@ -20,6 +20,19 @@
   system.addEventListener('change', () => { if (preference === 'auto') apply(); });
   apply();
 })();
+
+/* Tampilkan atau sembunyikan kata sandi pada formulir login dan ubah sandi. */
+const EYE_OPEN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>';
+const EYE_SHUT = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m3 3 18 18M10.6 10.6a3 3 0 0 0 4.2 4.2M9.4 5.3A9.8 9.8 0 0 1 12 5c6.4 0 10 7 10 7a18 18 0 0 1-3.2 4.1M6.2 6.2A18 18 0 0 0 2 12s3.6 7 10 7a9.7 9.7 0 0 0 4.1-.9"/></svg>';
+document.querySelectorAll('[data-password-toggle]').forEach(button =>
+  button.addEventListener('click', () => {
+    const input = document.getElementById(button.dataset.passwordToggle);
+    if (!input) return;
+    const show = input.type === 'password';
+    input.type = show ? 'text' : 'password';
+    button.innerHTML = show ? EYE_SHUT : EYE_OPEN;
+    button.setAttribute('aria-label', show ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi');
+  }));
 
 /* Konfirmasi sebelum arsip, dan kirim otomatis filter yang berubah. */
 document.querySelectorAll('[data-confirm]').forEach(form =>

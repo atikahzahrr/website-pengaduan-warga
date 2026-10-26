@@ -6,6 +6,10 @@ const UPLOAD_DIR = __DIR__ . '/uploads/';
 const PAGE_SIZE  = 10;
 const STATUSES   = ['Verifikasi', 'Diproses', 'Selesai'];
 
+/** Akun bawaan untuk simulasi: superadmin dibuat otomatis bila belum ada. */
+const DEFAULT_ADMIN_USERNAME = 'superadmin';
+const DEFAULT_ADMIN_PASSWORD = 'Admin123!';
+
 date_default_timezone_set('Asia/Jakarta');
 
 /** Koneksi PDO tunggal. Database dibuat dari schema.sql + seed bila belum ada. */
@@ -24,7 +28,39 @@ function db(): PDO
         require_once __DIR__ . '/database/seed.php';
         seedDatabase($pdo);
     }
+    ensureAuthSchema($pdo);
     return $pdo;
+}
+
+/**
+ * Tabel akun admin dibuat otomatis pada setiap koneksi sehingga database lama
+ * (dibuat sebelum fitur login) tetap kompatibel. Superadmin bawaan dibuat
+ * hanya bila tabel masih kosong.
+ */
+function ensureAuthSchema(PDO $pdo): void
+{
+    $pdo->exec("CREATE TABLE IF NOT EXISTS users (
+        id_user INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT UNIQUE NOT NULL,
+        nama_lengkap TEXT NOT NULL,
+        password_hash TEXT NOT NULL,
+        role TEXT NOT NULL DEFAULT 'admin' CHECK(role IN ('superadmin','admin')),
+        dinas TEXT,
+        status_aktif INTEGER NOT NULL DEFAULT 1,
+        terakhir_masuk DATETIME,
+        dibuat_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    )");
+
+    if ((int)$pdo->query('SELECT COUNT(*) FROM users')->fetchColumn() === 0) {
+        $pdo->prepare('INSERT INTO users (username,nama_lengkap,password_hash,role,dinas) VALUES (?,?,?,?,?)')
+            ->execute([
+                DEFAULT_ADMIN_USERNAME,
+                'Administrator Super',
+                password_hash(DEFAULT_ADMIN_PASSWORD, PASSWORD_DEFAULT),
+                'superadmin',
+                'Pusat Kendali Layanan',
+            ]);
+    }
 }
 
 function rows(string $sql, array $params = []): array

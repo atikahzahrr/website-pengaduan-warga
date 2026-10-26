@@ -4,6 +4,15 @@ declare(strict_types=1);
 /** Mengisi data simulasi awal (dipanggil otomatis saat database baru dibuat). */
 function seedDatabase(PDO $pdo): void
 {
+    $pdo->prepare('INSERT INTO users (username,nama_lengkap,password_hash,role,dinas) VALUES (?,?,?,?,?)')
+        ->execute([
+            DEFAULT_ADMIN_USERNAME,
+            'Administrator Super',
+            password_hash(DEFAULT_ADMIN_PASSWORD, PASSWORD_DEFAULT),
+            'superadmin',
+            'Pusat Kendali Layanan',
+        ]);
+
     $kategori = [
         ['infrastruktur', 'Infrastruktur & Jalan Rusak',    'Dinas Pekerjaan Umum (PU)',    '#2563eb'],
         ['pendidikan',    'Fasilitas Pendidikan & Sekolah', 'Dinas Pendidikan (Disdik)',    '#10b981'],

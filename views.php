@@ -15,6 +15,8 @@ $views = [
     'kebersihan'    => ['Monitoring Kebersihan', 'Pengawasan pengangkutan sampah dan kebersihan lingkungan.', 'laporan', '♻', '#14b8a6', 'JENIS ADUAN'],
     'cctv'          => ['Monitoring CCTV Publik', 'Status kamera dan kondisi lokasi menggunakan simulasi.', 'cctv', '◉', '#e11d48', 'LAINNYA'],
     'kepuasan'      => ['Monitoring Kepuasan Layanan', 'Ringkasan respons survei kepuasan layanan.', 'kepuasan', '☺', '#d97706', 'LAINNYA'],
+    'admin'         => ['Kelola Admin', 'Tambah admin baru, atur status akun, dan atur ulang kata sandi.', 'admin', '👤', '#0ea5e9', 'PENGELOLAAN'],
+    'akun'          => ['Profil & Akun', 'Data akun yang sedang digunakan dan perubahan kata sandi.', 'akun', '◍', '#64748b', 'AKUN'],
     // Halaman form (tidak tampil di menu)
     'form-aduan'    => ['Form Aduan', 'Isi data aduan masyarakat.', 'form-aduan', '', '', ''],
     'form-pengadu'  => ['Form Pengadu', 'Isi profil pengadu.', 'form-pengadu', '', '', ''],

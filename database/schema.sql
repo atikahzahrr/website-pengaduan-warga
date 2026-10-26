@@ -1,5 +1,17 @@
 PRAGMA foreign_keys = ON;
 
+CREATE TABLE IF NOT EXISTS users (
+    id_user INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT UNIQUE NOT NULL,
+    nama_lengkap TEXT NOT NULL,
+    password_hash TEXT NOT NULL,
+    role TEXT NOT NULL DEFAULT 'admin' CHECK(role IN ('superadmin','admin')),
+    dinas TEXT,
+    status_aktif INTEGER NOT NULL DEFAULT 1,
+    terakhir_masuk DATETIME,
+    dibuat_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE TABLE IF NOT EXISTS pelapor (
     id_pelapor INTEGER PRIMARY KEY AUTOINCREMENT,
     nik TEXT UNIQUE NOT NULL,

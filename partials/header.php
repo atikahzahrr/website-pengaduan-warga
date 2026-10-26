@@ -4,10 +4,14 @@ $navLabels = [
     'kelola-aduan' => 'Kelola Aduan', 'kelola-pengadu' => 'Kelola Pengadu', 'progress' => 'Progress Aduan',
     'infrastruktur' => 'Infrastruktur', 'parkir' => 'Parkir & Lalu Lintas', 'pendidikan' => 'Pendidikan',
     'kebersihan' => 'Kebersihan', 'cctv' => 'CCTV Publik', 'kepuasan' => 'Kepuasan Layanan',
+    'admin' => 'Kelola Admin', 'akun' => 'Profil & Akun',
 ];
+$user = currentUser();
 $groups = [];
 foreach ($views as $key => $v) {
-    if ($v[5] !== '') $groups[$v[5]][$key] = $v;
+    if ($v[5] === '') continue;
+    if ($key === 'admin' && !isSuperadmin()) continue;   // khusus superadmin
+    $groups[$v[5]][$key] = $v;
 }
 ?>
 <!DOCTYPE html>
@@ -32,6 +36,17 @@ document.documentElement.dataset.theme=p==='auto'?(matchMedia('(prefers-color-sc
       <label class="theme-control">Tema
         <select id="theme-select" aria-label="Pilih tema dashboard"><option value="auto">Otomatis</option><option value="light">Terang</option><option value="dark">Gelap</option></select>
       </label>
+      <?php if ($user): ?>
+        <div class="user-chip">
+          <span class="user-avatar" aria-hidden="true"><?= e(mb_strtoupper(mb_substr($user['nama'], 0, 1))) ?></span>
+          <span class="user-meta"><strong><?= e($user['nama']) ?></strong><span class="small muted"><?= e(roleLabel($user['role'])) ?></span></span>
+        </div>
+        <form method="post" action="index.php" class="logout-form">
+          <input type="hidden" name="csrf" value="<?= e(csrfToken()) ?>">
+          <input type="hidden" name="action" value="logout">
+          <button class="btn" type="submit">Keluar</button>
+        </form>
+      <?php endif; ?>
       <span class="dummy">Mode simulasi · Data dummy</span>
     </div>
   </header>
