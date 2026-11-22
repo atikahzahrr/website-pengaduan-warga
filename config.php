@@ -29,6 +29,7 @@ function db(): PDO
         seedDatabase($pdo);
     }
     ensureAuthSchema($pdo);
+    ensureMobileSchema($pdo);
     return $pdo;
 }
 
@@ -61,6 +62,27 @@ function ensureAuthSchema(PDO $pdo): void
                 'Pusat Kendali Layanan',
             ]);
     }
+}
+
+/**
+ * Kolom dan tabel tambahan untuk API warga (aplikasi mobile): akun warga (username dan
+ * kata sandi), foto profil, serta pencatatan percobaan login. Aman dijalankan berulang.
+ */
+function ensureMobileSchema(PDO $pdo): void
+{
+    $kolom = array_column($pdo->query('PRAGMA table_info(pelapor)')->fetchAll(), 'name');
+    foreach (['username' => 'TEXT', 'password_hash' => 'TEXT', 'foto_url' => 'TEXT'] as $nama => $tipe) {
+        if (!in_array($nama, $kolom, true)) {
+            $pdo->exec("ALTER TABLE pelapor ADD COLUMN {$nama} {$tipe}");
+        }
+    }
+    $pdo->exec('CREATE UNIQUE INDEX IF NOT EXISTS idx_pelapor_username ON pelapor(username)');
+    $pdo->exec('CREATE TABLE IF NOT EXISTS percobaan_login (
+        kunci TEXT PRIMARY KEY,
+        n INTEGER NOT NULL DEFAULT 0,
+        until_ts INTEGER NOT NULL DEFAULT 0,
+        last_ts INTEGER NOT NULL DEFAULT 0
+    )');
 }
 
 function rows(string $sql, array $params = []): array

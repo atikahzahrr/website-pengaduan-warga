@@ -199,10 +199,10 @@ try {
             $status = field('status');
             $persen = (int)($_POST['persen'] ?? -1);
             $catatan = field('catatan', 1000);
-            if (!in_array($status, STATUSES, true) || $persen < 0 || $persen > 100 || $catatan === '') throw new RuntimeException('Status, progress (0–100), dan catatan wajib diisi.');
-            if ($status === 'Selesai' && $persen !== 100) throw new RuntimeException('Status Selesai harus berprogress 100%.');
+            if ($status === 'Selesai') $persen = 100; // sama seperti API: Selesai otomatis 100%
+            if (!in_array($status, STATUSES, true) || $persen < 0 || $persen > 100) throw new RuntimeException('Status dan progress (0–100) wajib diisi.');
             $pdo->prepare('INSERT INTO progres_aduan (id_aduan,status_tahapan,persentase_progres,catatan_petugas) VALUES (?,?,?,?)')
-                ->execute([$id, $status, $persen, $catatan]);
+                ->execute([$id, $status, $persen, $catatan !== '' ? $catatan : null]);
             $pdo->prepare('UPDATE aduan SET status=? WHERE id_aduan=?')->execute([$status, $id]);
             saveUpload('foto', $id, 'foto_sesudah');
             flash("Progress {$id} diperbarui.");
